@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String                @id @default(uuid())
+  firstName           String
+  lastName            String
+  email               String                @unique
+  password            String
+  emergencyContacts   EmergencyContact[]
+  userHealthData      UserHealthData[]
+  userPersonalData    UserPersonalData[]
+  userResidencialData UserResidencialData[]
+  tags                Tag[]
+}
+
+model EmergencyContact {
+  id           String   @id @default(uuid())
+  name         String
+  email        String?
+  phone        String
+  relationship String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model UserPersonalData {
+  id        String   @id @default(uuid())
+  cpf       String?  @unique
+  phone     String?  @unique
+  birthDate DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model UserResidencialData {
+  id           String   @id @default(uuid())
+  street       String?
+  number       String?
+  neighborhood String?
+  complement   String?
+  city         String?
+  state        String?
+  zipcode      String?  @unique
+  country      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model UserHealthData {
+  id            String   @id @default(uuid())
+  bloodType     String?
+  biologicalSex String?
+  allergies     String?
+  medications   String?
+  illnesses     String?
+  treatments    String?
+  cirurgies     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+}
+
+model Tag {
+  id                   String   @id @default(uuid())
+  content              String
+  url                  String
+  size                 Int
+  errorCorrectionLevel String
+  version              Int
+  encodingMode         String
+  delimiter            String
+  protocolVersion      String
+  status               String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  userId               String
+  user                 User     @relation(fields: [userId], references: [id])
+}
